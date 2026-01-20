@@ -42,11 +42,10 @@ app.get('/allflavours', async(req,res)=> {
 //route: add flavours
 app.post('/addflavour',async(req,res)=> {
     try{
-        const { id, flavour_name,flavour_pic} = req.body;
-
+        const {flavour_name,flavour_pic} = req.body;
         let connection = await mysql.createConnection(dbConfig);
         const [rows] = await connection.execute('INSERT INTO defaultdb.icecream (id,flavour_name,flavour_pic) VALUES (?,?,?)', [id, flavour_name,flavour_pic]);
-        res.json(rows);
+        res.status(201).json({message:'Flavour has been added successfully'});
     } catch (err) {
         console.error(err);
         res.status(500).json({message:'Server error for addflavour'});
@@ -60,8 +59,8 @@ app.post('/updateflavour/:id',async(req,res)=> {
         const {flavour_name,flavour_pic} = req.body;
 
         let connection = await mysql.createConnection(dbConfig);
-        const [rows] = await connection.execute('UPDATE defaultdb.icecream SET id=? , flavour_name=?,flavour_pic=? WHERE id=?', [id, flavour_name, flavour_pic]);
-        res.json(rows);
+        await connection.execute('UPDATE defaultdb.icecream SET id=? , flavour_name=?,flavour_pic=? WHERE id=?', [id, flavour_name, flavour_pic]);
+        res.status(201).json({message:'Flavour '+id+' updated successfully'});
     } catch (err) {
         console.error(err);
         res.status(500).json({message:'Server error for updateflavour'});
@@ -71,11 +70,10 @@ app.post('/updateflavour/:id',async(req,res)=> {
 //route: delete flavour
 app.post('/deleteflavour/:id',async(req,res)=> {
     try{
-        const { id} = req.params;
-
+        const {id} = req.params;
         let connection = await mysql.createConnection(dbConfig);
-        const [rows] = await connection.execute('DELETE FROM defaultdb.icecream WHERE id=?');
-        res.json(rows);
+        await connection.execute('DELETE FROM defaultdb.icecream WHERE id=?'+id);
+        res.status(201).json({message:'Flavour '+id+' deleted successfully'});
     } catch (err) {
         console.error(err);
         res.status(500).json({message:'Server error for deleteflavour'});
